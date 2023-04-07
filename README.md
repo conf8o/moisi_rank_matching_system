@@ -1,5 +1,5 @@
-# poc_yukio_solo_q_pro_league
-Apex Legends ソロキュープロリーグシステム feat. YUKIO のプロトタイプ
+# poc_yukio_solo_q_league
+Apex Legends ソロキューリーグシステム feat. YUKIO のプロトタイプ
 
 ## 発端
 
