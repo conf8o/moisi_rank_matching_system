@@ -3,6 +3,10 @@ Apex Legends ソロキュープロリーグシステム feat. YUKIO のプロト
 
 ## 発端
 
+https://therealm.gg/
+
+https://about-us.therealm.gg/
+
 https://twitter.com/YukioFPS/status/1644189676423778305
 
 https://twitter.com/YukioFPS/status/1644196041108115456
