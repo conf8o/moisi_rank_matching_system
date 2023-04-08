@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from numbers import Number
 
 @dataclass
 class Player:
@@ -42,6 +41,7 @@ class Entry:
 class PartyMaxLenError(Exception):
     pass
 
+
 class Party:
     """
     マッチングで確定したパーティ情報。
@@ -58,27 +58,12 @@ class Party:
     @property
     def inner_rate(self) -> int:
         return sum(player.inner_rate for player in self.players) / Party.MAX_LEN
-
+    
 
 @dataclass
 class Matching:
     parties: list[Party]
 
-
-def _median(ns: list[Number]) -> Number:
-    """
-    [1, 2, 3, 4] -> 2.5
-    [1, 2, 3] -> 2
-    """
-
-    l = len(ns)
-    if l % 2 == 0:
-        return (ns[l//2] + ns[l//2-1]) / 2
-    else:
-        return ns[l//2-1]
-
-class MakeTrioModeError(Exception):
-    pass
 
 class SoloMatching:
     def __init__(self, entries: list[Entry]) -> None:
@@ -137,10 +122,6 @@ class DuoMatching:
         self.lower_duos = lowers(self.duos)
         self.higher_duos = highers(self.duos)
 
-        input(self.lower_solos)
-        input(self.higher_solos)
-        input(self.lower_duos)
-        input(self.higher_duos)
 
     def make_match(self) -> list[Entry]:
         """
@@ -196,39 +177,3 @@ class DuoMatching:
                 matchings += higher_duo_matching.make_match()
 
         return matchings
-
-
-def calculate_matching(entries: list[Entry]) -> list[Entry]:
-    entries = list(sorted(entries, key=lambda e: e.inner_rate))
-
-    mid = _median([entry.inner_rate for entry in entries])
-
-    solos= [entry for entry in entries if len(entry.players) == 1]
-    duos = [entry for entry in entries if len(entry.players) == 2]
-    trios = [entry for entry in entries if len(entry.players) == 3]
-
-    def lowers(entries):
-        return [entry.inner_rate for entry in entries if entry.inner_rate <= mid]
-    
-    def highers(entries):
-        return [entry.inner_rate for entry in entries if entry.inner_rate > mid]
-    
-    lower_solos = lowers(solos)
-    higher_solos = highers(solos)
-
-    lower_duos = lowers(duos)
-    higher_duos = highers(duos)
-
-    new_trios = []
-    if len(higher_duos) == 1:
-        trio = _make_trio(higher_duos[0], lower_solos[0])
-        new_trios.append(trio)
-
-    if len(lower_duos) == 1:
-        trio = _make_trio(lower_duos[0], higher_solos[-1])
-        new_trios.append(trio)
-
-    
-    
-    calculate_matching(lower_solos + higher_duos)
-    calculate_matching(higher_solos + lower_solos)
