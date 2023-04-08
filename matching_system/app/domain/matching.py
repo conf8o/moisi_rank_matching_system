@@ -152,14 +152,13 @@ class DuoMatching:
             solos = [] if len(self.higher_solos) == 1 else self.higher_solos[:-1]
             trio = DuoMatching.make_trio(self.lower_duos[0], solo)
             matchings += [trio, *solos]
+        elif not self.lower_duos:
+            matchings += self.higher_solos
+        elif not self.higher_solos:
+            matchings += self.lower_duos
         else:
-            if not self.lower_duos:
-                matchings += self.higher_solos
-            elif not self.higher_solos:
-                matchings += self.lower_duos
-            else:
-                lower_duo_matching = DuoMatching(self.lower_duos + self.higher_solos)
-                matchings += lower_duo_matching.make_match()
+            lower_duo_matching = DuoMatching(self.lower_duos + self.higher_solos)
+            matchings += lower_duo_matching.make_match()
         
         # higher_duo_matching
         if len(self.higher_duos) == 1:
@@ -167,13 +166,12 @@ class DuoMatching:
             solos = [] if len(self.lower_solos) == 1 else self.lower_solos[1:]
             trio = DuoMatching.make_trio(self.higher_duos[0], solo)
             matchings += [trio, *solos]
+        elif not self.higher_duos:
+            matchings += self.lower_solos
+        elif not self.lower_solos:
+            matchings += self.higher_duos
         else:
-            if not self.higher_duos:
-                matchings += self.lower_solos
-            elif not self.lower_solos:
-                matchings += self.higher_duos
-            else:
-                higher_duo_matching = DuoMatching(self.higher_duos + self.lower_solos)
-                matchings += higher_duo_matching.make_match()
+            higher_duo_matching = DuoMatching(self.higher_duos + self.lower_solos)
+            matchings += higher_duo_matching.make_match()
 
         return matchings
