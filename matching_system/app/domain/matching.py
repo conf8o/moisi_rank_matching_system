@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from numbers import Number
 from enum import Enum
 from collections import deque
+from abc import ABC
 
 @dataclass
 class Player:
@@ -127,6 +128,7 @@ class DuoMatchingError(Exception):
 
 
 class DuoMatching:
+    @staticmethod
     def make_trio(duo: Entry, solo: Entry) -> Entry:
         return Entry([duo.players[0], duo.players[1], solo.players[0]])
 
@@ -153,27 +155,6 @@ class DuoMatching:
             matchings += list(self.solos)
         return matchings
 
-class PartyMaxLenError(Exception):
-    pass
-
-
-class Party:
-    """
-    マッチングで確定したパーティ情報。
-    """
-
-    MAX_LEN = 3
-
-    def __init__(self, players: list[Player]) -> None:
-        if len(players) > Party.MAX_LEN:
-            raise PartyMaxLenError()
-        
-        self.players = players
-    
-    @property
-    def inner_rate(self) -> int:
-        return sum(player.inner_rate for player in self.players) / Party.MAX_LEN
-
 
 class Matching:
     def __init__(self, entries: list[Entry]) -> None:
@@ -196,3 +177,39 @@ class Matching:
         else:
             solo_matching = SoloMatching(rest_solos, self.median)
             return matchings + solo_matching.make_match()
+
+
+class PartyMaxLenError(Exception):
+    pass
+
+
+class Party:
+    """
+    マッチングで確定したパーティ情報。
+    """
+
+    MAX_LEN = 3
+
+    def __init__(self, players: list[Player]) -> None:
+        if len(players) > Party.MAX_LEN:
+            raise PartyMaxLenError()
+        
+        self.players = players
+    
+    @property
+    def inner_rate(self) -> int:
+        return sum(player.inner_rate for player in self.players) / Party.MAX_LEN
+    
+
+@dataclass
+class Match:
+    id: str
+    parties: list[Party]
+
+
+class AMatchRepository(ABC):
+    def __init__(self, store) -> None:
+        self.store = store
+
+    def save(self, payload: Match) -> Match:
+        return payload
