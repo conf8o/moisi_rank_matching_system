@@ -72,6 +72,5 @@ def make_match(req: MatchMakingRequest, db: Session = Depends(get_db)):
 
 @router.post("/match_making_proto")
 def make_match_proto(req: MatchMakingRequest) -> list[Player]:
-    print(req.to_model())
     m: domain.Match = match_making.make_match(match_making.MockMatchRepository(None), req.to_model())
     return MatchMakingResponse.from_model(m.parties)
