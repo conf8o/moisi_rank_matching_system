@@ -74,7 +74,7 @@ class SoloMatching:
         mid: deque
         [4, 4, 5, 6, 6, 6]
         
-        lowerとhigherのペアの内部レートに応じて、midの前後からplayerを取ってくる。
+        midの内部レートに応じて、lowerとhigherのペアを取ってくる
         """
 
         l = len(self.players)

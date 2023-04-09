@@ -61,9 +61,8 @@ def test_solo_matching():
     # 内部レートの分散を計算し、マッチング後の分散が減っていることでテストとする
     original_var = variance(solos)
     after_var = variance(actual)
-    diff = abs(original_var - after_var)
     print(_players_inner_rates(actual))
-    print(f"分散の差 = {diff}")
+    print(f"分散: before:{original_var}, after{after_var}")
 
     assert original_var > after_var
 
@@ -98,9 +97,8 @@ def test_duo_matching():
 
     original_var = variance(entries)
     after_var = variance(actual)
-    diff = original_var - after_var
     print(_players_inner_rates(actual))
-    print(f"分散の差 = {diff}")
+    print(f"分散: before:{original_var}, after{after_var}")
 
     assert original_var > after_var
 
@@ -147,8 +145,7 @@ def test_matching():
     assert sum(len(e.players) for e in entries) == sum(len(e.players) for e in actual) 
     
     after_var = variance(actual)
-    diff = original_var - after_var
     print(_players_inner_rates(actual))
-    print(f"分散の差 = {diff}")
+    print(f"分散: before:{original_var}, after{after_var}")
 
     assert original_var > after_var
