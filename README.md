@@ -1,5 +1,5 @@
 # poc_yukio_solo_q_league
-Apex Legends ソロキューリーグシステム feat. YUKIO のプロトタイプ
+Apex Legends 天下一モイシランクのマッチングシステム　プロトタイプ
 
 ## 発端
 
