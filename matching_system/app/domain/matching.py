@@ -64,21 +64,6 @@ class SoloMatching:
         self.players = [entry.players[0] for entry in self.entries]
 
     def make_match(self) -> List[Entry]:
-        """
-        [3, 3, 3, 4, 4, 4, 5, 6, 6, 6, 6, 7, 7, 7]: len = 13, split_len = 13 // 3 = 4 
-        
-        lower: sorted asc
-        [3, 3, 3, 4]
-
-        higher: sorted desc 
-        [7, 7, 7, 6]
-        
-        mid: deque
-        [4, 4, 5, 6, 6, 6]
-        
-        midの内部レートに応じて、lowerとhigherのペアを取ってくる
-        """
-
         l = len(self.players)
         if l < 3:
             return self.entries
