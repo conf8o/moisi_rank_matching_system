@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.database import get_db
-import app.use_case.match_making as match_making
-import app.domain.matching as domain
+from database import get_db
+from use_case import match_making
+from domain import matching as domain
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -22,13 +22,13 @@ class Player(BaseModel):
 
 
 class Entry(BaseModel):
-    players: list[Player]
+    players: List[Player]
 
     def to_model(self) -> domain.Entry:
         return domain.Entry([p.to_model() for p in self.players])
 
 class Party(BaseModel):
-    players: list[Player]
+    players: List[Player]
 
     @staticmethod
     def from_model(party: domain.Party) -> 'Party':
@@ -36,17 +36,17 @@ class Party(BaseModel):
 
 
 class MatchMakingRequest(BaseModel):
-    entries: list[Entry]
+    entries: List[Entry]
 
-    def to_model(self) -> list[domain.Entry]:
+    def to_model(self) -> List[domain.Entry]:
         return [e.to_model() for e in self.entries]
 
 
 class MatchMakingResponse(BaseModel):
-    parties: list[Party]
+    parties: List[Party]
 
     @staticmethod
-    def from_model(parties: list[domain.Party]) -> 'MatchMakingResponse':
+    def from_model(parties: List[domain.Party]) -> 'MatchMakingResponse':
         return MatchMakingResponse(parties=[Party.from_model(p) for p in parties])
 
 
@@ -71,6 +71,6 @@ def make_match(req: MatchMakingRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/match_making_proto")
-def make_match_proto(req: MatchMakingRequest) -> list[Player]:
+def make_match_proto(req: MatchMakingRequest) -> MatchMakingResponse:
     m: domain.Match = match_making.make_match(match_making.MockMatchRepository(None), req.to_model())
     return MatchMakingResponse.from_model(m.parties)

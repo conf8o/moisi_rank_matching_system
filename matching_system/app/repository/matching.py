@@ -1,4 +1,4 @@
-from app.domain.matching import Match, AMatchRepository
+from domain.matching import Match, AMatchRepository
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 

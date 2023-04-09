@@ -3,6 +3,7 @@ from numbers import Number
 from enum import Enum
 from collections import deque
 from abc import ABC
+from typing import List
 
 @dataclass
 class Player:
@@ -30,7 +31,7 @@ class Entry:
 
     MAX_LEN = 3
 
-    def __init__(self, players: list[Player]) -> None:
+    def __init__(self, players: List[Player]) -> None:
         if len(players) > Entry.MAX_LEN:
             raise EntryMaxLexError()
         
@@ -57,12 +58,12 @@ class Entry:
 
 
 class SoloMatching:
-    def __init__(self, entries: list[Entry], median: Number) -> None:
+    def __init__(self, entries: List[Entry], median: Number) -> None:
         self.entries = list(sorted(entries, key=Entry.sort_key))
         self.median = median
         self.players = [entry.players[0] for entry in self.entries]
 
-    def make_match(self) -> list[Entry]:
+    def make_match(self) -> List[Entry]:
         """
         [3, 3, 3, 4, 4, 4, 5, 6, 6, 6, 6, 7, 7, 7]: len = 13, split_len = 13 // 3 = 4 
         
@@ -108,7 +109,7 @@ class SoloMatching:
         return matchings
 
 
-def _median(entries: list[Entry]) -> Number:
+def _median(entries: List[Entry]) -> Number:
     """
     [1, 2, 3, 4] -> 2.5
     [1, 2, 3] -> 2
@@ -132,13 +133,13 @@ class DuoMatching:
     def make_trio(duo: Entry, solo: Entry) -> Entry:
         return Entry([duo.players[0], duo.players[1], solo.players[0]])
 
-    def __init__(self, entries: list[Entry], median: Number) -> None:
+    def __init__(self, entries: List[Entry], median: Number) -> None:
         self.entries = sorted(entries, key=Entry.sort_key)
         self.median = median
         self.solos = deque(filter(Entry.is_solo, self.entries))
         self.duos = list(filter(Entry.is_duo, self.entries))
 
-    def make_match(self) -> list[Entry]:
+    def make_match(self) -> List[Entry]:
         matchings = []
         for duo in self.duos:
             if duo.inner_rate >= self.median:
@@ -157,14 +158,14 @@ class DuoMatching:
 
 
 class Matching:
-    def __init__(self, entries: list[Entry]) -> None:
+    def __init__(self, entries: List[Entry]) -> None:
         self.entries = sorted(entries, key=Entry.sort_key)
         self.median = _median(self.entries)
         self.solos = list(filter(Entry.is_solo, self.entries))
         self.duos = list(filter(Entry.is_duo, self.entries))
         self.trios = list(filter(Entry.is_trio, self.entries))
 
-    def make_match(self) -> list[Entry]:
+    def make_match(self) -> List[Entry]:
         duo_matching = DuoMatching(self.solos + self.duos, self.median)
         duo_matching_results = duo_matching.make_match()
 
@@ -190,7 +191,7 @@ class Party:
 
     MAX_LEN = 3
 
-    def __init__(self, players: list[Player]) -> None:
+    def __init__(self, players: List[Player]) -> None:
         if len(players) > Party.MAX_LEN:
             raise PartyMaxLenError()
         
@@ -204,7 +205,7 @@ class Party:
 @dataclass
 class Match:
     id: str
-    parties: list[Party]
+    parties: List[Party]
 
 
 class AMatchRepository(ABC):

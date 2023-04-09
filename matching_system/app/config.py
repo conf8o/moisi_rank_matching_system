@@ -1,1 +1,1 @@
-DATABASE_URL = "postgresql://app:p@ssw0rd@localhost:5432/app"
+DATABASE_URL = "sqlite:///db.sqlite3"
