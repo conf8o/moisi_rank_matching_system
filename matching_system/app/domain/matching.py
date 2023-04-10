@@ -4,6 +4,7 @@ from enum import Enum
 from collections import deque
 from abc import ABC
 from typing import List
+import heapq
 
 @dataclass
 class Player:
@@ -57,42 +58,6 @@ class Entry:
         return f"Entry({self.players})"
 
 
-class SoloMatching:
-    def __init__(self, entries: List[Entry], median: Number) -> None:
-        self.entries = list(sorted(entries, key=Entry.sort_key))
-        self.median = median
-        self.players = [entry.players[0] for entry in self.entries]
-
-    def make_match(self) -> List[Entry]:
-        l = len(self.players)
-        if l < 3:
-            return self.entries
-        
-        split_l = l // 3
-        lowers = self.players[:split_l]
-        highers = sorted(self.players[-split_l:], key=lambda x: -x.inner_rate)
-        
-        matchings = []
-        pairs = deque(sorted(zip(lowers, highers), key=lambda x: Entry([*x]).inner_rate))
-        mids = iter(self.players[split_l:-split_l])
-        for mid in mids:
-            if mid.inner_rate >= self.median:
-                lower, higher = pairs.popleft()
-                matchings.append(Entry([lower, mid, higher]))
-            else:
-                lower, higher = pairs.pop()
-                matchings.append(Entry([lower, mid, higher]))
-
-            if not pairs:
-                break
-        
-        mids = list(mids)
-        if mids:
-            rest = Entry(list(mids))
-            matchings.append(rest)
-        
-        return matchings
-
 
 def _median(entries: List[Entry]) -> Number:
     """
@@ -114,6 +79,14 @@ class DuoMatchingError(Exception):
 
 
 class DuoMatching:
+    class Priority:
+        def __init__(self, entry: Entry, median: Number) -> None:
+            self.entry = entry
+            self.median = median
+
+        def __lt__(self, other: 'DuoMatching.Priority'):
+            return -abs(self.entry.inner_rate - self.median) < -abs(other.entry.inner_rate - other.median)
+
     @staticmethod
     def make_trio(duo: Entry, solo: Entry) -> Entry:
         return Entry([duo.players[0], duo.players[1], solo.players[0]])
@@ -123,10 +96,13 @@ class DuoMatching:
         self.median = median
         self.solos = deque(filter(Entry.is_solo, self.entries))
         self.duos = list(filter(Entry.is_duo, self.entries))
+        self.duos_for_heap = [DuoMatching.Priority(e, self.median) for e in self.duos]
+        heapq.heapify(self.duos_for_heap)
 
     def make_match(self) -> List[Entry]:
         matchings = []
-        for duo in self.duos:
+        while self.duos_for_heap:
+            duo = heapq.heappop(self.duos_for_heap).entry
             if duo.inner_rate >= self.median:
                 solo = self.solos.popleft()
                 matchings.append(DuoMatching.make_trio(duo, solo))
@@ -139,7 +115,43 @@ class DuoMatching:
 
         if self.solos:
             matchings += list(self.solos)
+
+        if self.duos_for_heap:
+            matchings += [e.entry for e in self.duos_for_heap]
+    
         return matchings
+    
+
+class SoloMatching:
+    def __init__(self, entries: List[Entry], median: Number) -> None:
+        self.entries = list(sorted(entries, key=Entry.sort_key))
+        self.median = median
+        self.players = [entry.players[0] for entry in self.entries]
+
+    def make_match(self) -> List[Entry]:
+        l = len(self.players)
+        if l < 3:
+            return self.entries
+        
+        split_l = l // 3
+        lowers = self.players[:split_l]
+        highers = sorted(self.players[-split_l:], key=lambda x: -x.inner_rate)
+        
+        pairs = [Entry([*p]) for p in zip(lowers, highers)]
+        mids = [Entry([s]) for s in self.players[split_l:-split_l]]
+        mid_strongers = []
+        while len(mids) - split_l > 0:
+            mid_strongers.append(mids.pop())
+
+        duo_matching = DuoMatching(pairs + mids, self.median)
+        matchings = duo_matching.make_match()
+        
+        res = list(filter(Entry.is_trio, matchings))
+        if mid_strongers:
+            rest = Entry(mid_strongers)
+            res.append(rest)
+        
+        return res 
 
 
 class Matching:
