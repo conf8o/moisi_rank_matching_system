@@ -6,6 +6,7 @@ from use_case import match_making
 from domain import matching as domain
 from pydantic import BaseModel
 
+
 router = APIRouter()
 
 
@@ -67,10 +68,11 @@ def query_matching(db: Session = Depends(get_db)):
 
 @router.post("/match_making")
 def make_match(req: MatchMakingRequest, db: Session = Depends(get_db)):
-    return str(db)
+    m: domain.Match = match_making.make_match(db, req.to_model())
+    return MatchMakingResponse.from_model(m.parties)
 
 
 @router.post("/match_making_proto")
-def make_match_proto(req: MatchMakingRequest) -> MatchMakingResponse:
-    m: domain.Match = match_making.make_match(match_making.MockMatchRepository(None), req.to_model())
+def make_match_proto(req: MatchMakingRequest, db: Session = Depends(get_db)) -> MatchMakingResponse:
+    m: domain.Match = match_making.make_match(db, req.to_model())
     return MatchMakingResponse.from_model(m.parties)

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from numbers import Number
-from enum import Enum
 from collections import deque
 from abc import ABC
 from typing import List
 import heapq
+from typing import Any, Annotated
 
 @dataclass
 class Player:
@@ -12,7 +12,7 @@ class Player:
     選手
     """
 
-    id: str
+    id: Annotated[Any, "Unique"]
     name: str
     point: int
 
@@ -31,11 +31,12 @@ class Entry:
     """
 
     MAX_LEN = 3
+    id: Annotated[Any, "Unique"]
 
     def __init__(self, players: List[Player]) -> None:
         if len(players) > Entry.MAX_LEN:
             raise EntryMaxLexError()
-        
+
         self.players = players
 
     def is_solo(self) -> bool:
@@ -188,10 +189,11 @@ class Party:
 
     MAX_LEN = 3
 
-    def __init__(self, players: List[Player]) -> None:
+    def __init__(self, id: Annotated[Any, "Unique"], players: List[Player]) -> None:
         if len(players) > Party.MAX_LEN:
             raise PartyMaxLenError()
         
+        self.id = id
         self.players = players
     
     @property
@@ -201,7 +203,7 @@ class Party:
 
 @dataclass
 class Match:
-    id: str
+    id: Annotated[Any, "Unique"] 
     parties: List[Party]
 
 
@@ -210,4 +212,4 @@ class AMatchRepository(ABC):
         self.store = store
 
     def save(self, payload: Match) -> Match:
-        return payload
+        ...

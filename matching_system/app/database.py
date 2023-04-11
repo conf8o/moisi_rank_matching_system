@@ -1,13 +1,16 @@
 from config import DATABASE_URL
-from typing import Generator
-from sqlalchemy import create_engine
+from typing import Generator, Callable
+from sqlalchemy import create_engine, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+ID = String
 
 Base = declarative_base()
 try:
     engine = create_engine(
-        DATABASE_URL
+        DATABASE_URL,
+        echo=True
     )
 
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -17,7 +20,6 @@ except Exception as e:
     traceback.print_exc()
     print(e)
     print("DB connection failed")
-
 
 def get_db() -> Generator:
     db = None
@@ -31,3 +33,8 @@ def get_db() -> Generator:
     finally:
         if db:
             db.close()
+
+def repository(Repository) -> Callable:
+
+
+    return get_db
