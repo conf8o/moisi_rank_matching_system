@@ -12,7 +12,7 @@ class Player:
     選手
     """
 
-    id: str
+    id: int
     name: str
     point: int
 
@@ -35,7 +35,7 @@ class Entry:
     def __init__(self, players: List[Player]) -> None:
         if len(players) > Entry.MAX_LEN:
             raise EntryMaxLexError()
-        
+    
         self.players = players
 
     def is_solo(self) -> bool:
@@ -201,7 +201,7 @@ class Party:
 
 @dataclass
 class Match:
-    id: str
+    id: int
     parties: List[Party]
 
 
@@ -210,4 +210,4 @@ class AMatchRepository(ABC):
         self.store = store
 
     def save(self, payload: Match) -> Match:
-        return payload
+        ...

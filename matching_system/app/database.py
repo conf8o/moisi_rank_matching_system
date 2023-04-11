@@ -1,5 +1,5 @@
 from config import DATABASE_URL
-from typing import Generator
+from typing import Generator, Callable
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -18,7 +18,6 @@ except Exception as e:
     print(e)
     print("DB connection failed")
 
-
 def get_db() -> Generator:
     db = None
     try:
@@ -31,3 +30,8 @@ def get_db() -> Generator:
     finally:
         if db:
             db.close()
+
+def repository(Repository) -> Callable:
+
+
+    return get_db
