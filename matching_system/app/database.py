@@ -1,13 +1,16 @@
 from config import DATABASE_URL
 from typing import Generator, Callable
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+ID = String
 
 Base = declarative_base()
 try:
     engine = create_engine(
-        DATABASE_URL
+        DATABASE_URL,
+        echo=True
     )
 
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
