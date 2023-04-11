@@ -1,4 +1,4 @@
-# poc_yukio_solo_q_league
+# moisi_rank_matching_system
 Apex Legends 天下一モイシランクのマッチングシステム　プロトタイプ
 
 ## 発端
