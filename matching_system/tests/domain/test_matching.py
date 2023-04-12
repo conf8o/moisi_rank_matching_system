@@ -12,6 +12,7 @@ def test_party_inner_rate():
     point2 = 5
     point3 = 100
     party = matching.Party(
+        "",
         [matching.Player("1", "a", point1),
          matching.Player("2", "b", point2),
          matching.Player("3", "c", point3)]
@@ -58,7 +59,7 @@ def test_solo_matching():
     original_var = variance(solos)
     after_var = variance(actual)
     print(_players_inner_rates(actual))
-    print(f"分散: before:{original_var}, after{after_var}")
+    print(f"分散: before:{original_var}, after:{after_var}")
 
     assert original_var > after_var
 
@@ -94,7 +95,7 @@ def test_duo_matching():
     original_var = variance(entries)
     after_var = variance(actual)
     print(_players_inner_rates(actual))
-    print(f"分散: before:{original_var}, after{after_var}")
+    print(f"分散: before:{original_var}, after:{after_var}")
 
     assert original_var > after_var
 
@@ -142,6 +143,6 @@ def test_matching():
     
     after_var = variance(actual)
     print(_players_inner_rates(actual))
-    print(f"分散: before:{original_var}, after{after_var}")
+    print(f"分散: before:{original_var}, after:{after_var}")
 
     assert original_var > after_var
